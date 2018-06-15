@@ -6,7 +6,11 @@ import GameState
 
 # the initialisation calls for pygame and the current screen.
 pygame.init()  # initialize module
+# record monitor information
 Global.DisplayHeight, Global.DisplayWidth = pygame.display.Info()
+# default to full screen, but this can be changes later in settings
+Global.width = Global.DisplayWidth
+Global.height = Global.DisplayHeight
 screen = pygame.display.set_mode((Global.width, Global.height)) # create screen surface on
 # which to draw things
 screen.fill(shared.BLACK) # draw background
@@ -17,23 +21,12 @@ screen.set_caption("ChAI - Checkers with AI")
 Quit = False
 State = 0
 
-# the get_image function will load in the correct image only once, and will store the image in 
-# a dictionary so that it doesn't have to be loaded in pixel by pixel every time. This code
-# came from this source https://nerdparadise.com/programming/pygame/part2.
-_image_library = {}
-def get_image(path):
-        global _image_library
-        image = _image_library.get(path)
-        if image == None:
-                image = pygame.image.load(path).convert_alpha()
-                _image_library[path] = image
-        return image
-
 while not Quit:
 
     # Start
     if State == 0:
-        State = 4  # TODO: change this to State == 1 when MainMenu is implemented
+        # Show splash screen and start screen
+        State = 6  # TODO: change this to State == 1 when MainMenu is implemented
 
     # MainMenu
     if  State == 1:
@@ -52,8 +45,7 @@ while not Quit:
 
     # Game
     if State == 4:
-        boardImg = get_image(os.path.join('Assets','ChessBoard' + str(Global.boardType) + '.jpg')
-        nextState = GameState.RunGame(screen, boardImg)
+        nextState = GameState.RunGame(screen)
 
     # GameOver  
     if State == 5:
@@ -62,6 +54,29 @@ while not Quit:
 
     # Restart
     if State == 6:
+        # empty the player piece groups
+        Global.Player1List.empty() 
+        Global.Player2List.empty()
+        Global.Player1Dict.clear()
+        Global.Player2Dict.clear()
+
+        for i in range(9):
+            if i%2 == 0:
+                player1Piece = Player.PlayerPiece(1, i, 2)
+                Global.Player1List.add(Player1Piece)
+                Global.Player1Dict(i, 2) = Player1Piece
+
+                player2Piece = Player.PlayerPiece(2,i,6)
+                Global.Player2List.add(Player2Piece)
+                Global.Player2Dict(i, 6) = Player2Piece
+
+                player2Piece = Player.PlayerPiece(2,i,8)
+                Global.Player2List.add(Player2Piece)
+                Global.Player2Dict(i, 8) = Player2Piece
+                
+            else:
+                player1Piece = Player.PlayerPiece(,i)
+
        # TODO: make player pieces and other variables required to make the game run
         State = 4
         pass
