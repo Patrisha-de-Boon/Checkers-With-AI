@@ -60,8 +60,9 @@ while not Quit:
         Global.Player1Dict.clear()
         Global.Player2Dict.clear()
 
-        for i in range(9):
-            if i%2 == 0:
+        # place the player pieces in the correct location and store the data
+        for i in range(1,9):
+            if i%2 != 0:
                 player1Piece = Player.PlayerPiece(1, i, 2)
                 Global.Player1List.add(Player1Piece)
                 Global.Player1Dict(i, 2) = Player1Piece
@@ -75,7 +76,19 @@ while not Quit:
                 Global.Player2Dict(i, 8) = Player2Piece
                 
             else:
-                player1Piece = Player.PlayerPiece(,i)
+                player1Piece = Player.PlayerPiece(1, i, 1)
+                Global.Player1List.add(Player1Piece)
+                Global.Player1Dict(i, 1) = Player1Piece
+
+                player1Piece = Player.PlayerPiece(1, i, 3)
+                Global.Player1List.add(Player1Piece)
+                Global.Player1Dict(i, 3) = Player1Piece
+
+                player2Piece = Player.PlayerPiece(2,i,7)
+                Global.Player2List.add(Player2Piece)
+                Global.Player2Dict(i, 7) = Player2Piece
+
+
 
        # TODO: make player pieces and other variables required to make the game run
         State = 4
