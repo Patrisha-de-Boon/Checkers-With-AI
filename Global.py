@@ -1,9 +1,13 @@
-
 import pygame  # load pygame keywords
-import TwoWayDict  # include two way dictionary class for player character
+import os
 
-DisplayWidth = 0
+# attributes of user's display
 DisplayHeight = 0
+DisplayWidth = 0
+
+#attributes of game screen
+Height = 0
+Width = 0
 
 WindowWidth = 500
 WindowHeight = 500
@@ -43,4 +47,6 @@ def get_image(path):
                 _image_library[path] = image
         return image
 
-boardImg = get_image(os.path.join('Assets','ChessBoard' + str(boardType) + '.jpg')
+boardImg = get_image(os.path.join('Assets','ChessBoard' + str(boardType) + '.jpg'))
+boardImgRect = boardImg.get_rect()
+boardImgRect.center = Width/2, Height/2
