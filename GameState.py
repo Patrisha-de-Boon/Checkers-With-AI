@@ -4,14 +4,15 @@ import os      # help python identify the OS
 import Global  # includes variables meant to be common to multiple files
 
 def redraw(screen):
-    # black out the screen and display the board behind everything centered in the screen
-    screen.fill(Global.BLACK)
     screen.blit(Global.boardImg, Global.boardImgRect)
     # draw the player pieces
-    Global.Player1List.draw(screen)
-    Global.Player2List.draw(screen)
+    for player in Global.Player1List:
+        player.draw(screen)
+    for player in Global.Player1List:
+        player.draw(screen)
+  
 
-def resize(screen, event):
+def resizeScreen(screen, event):
     screen = pygame.display.set_mode(event.dict['size'], pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
     Global.Width = event.w
     Global.Height = event.h
@@ -22,29 +23,21 @@ def resize(screen, event):
     Global.boardImgRect = Global.boardImg.get_rect()
     Global.boardImgRect.center = (Global.Width/2, Global.Height/2)
     for piece in Global.Player1List:
-        piece.resize()
+        piece.resize(screen)
     for piece in Global.Player2List:
-        piece.resize()
+        piece.resize(screen)
 
 def processMouseInput(screen, event, currPiece):
     for piece in Global.Player1List:
         if piece.rect.collidepoint(event.pos):
             if piece != currPiece:
-                if currPiece is not None:
-                    currPiece.deselect()
-                piece.select()
-                screen.blit(piece.image, piece.rect)
+                piece.select(screen)
                 return piece
     for piece in Global.Player2List:
         if piece.rect.collidepoint(event.pos):
             if piece != currPiece:
-                if currPiece is not None:
-                    currPiece.deselect()
-                piece.select()
-                screen.blit(piece.image, piece.rect)
+                piece.select(screen)
                 return piece
-    if currPiece is not None:
-        currPiece.deselect()
     return None
 
 def RunGame(screen):
@@ -68,17 +61,19 @@ def RunGame(screen):
 
             # resize the board and the pieces according to the user's manipulation of the screen size
             elif event.type == pygame.VIDEORESIZE:
-                resize(screen, event)
+                resizeScreen(screen, event)
                 redrawFlag = True
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                selectedPiece = processMouseInput(screen, event, selectedPiece)
+                newSelectedPiece = processMouseInput(screen, event, selectedPiece)
+                if selectedPiece is not None and newSelectedPiece != selectedPiece:
+                    selectedPiece.deselect(screen)
+                selectedPiece = newSelectedPiece
 
         # redraw the board and pieces when necessary
         if redrawFlag:
-            redraw(screen)
-
-        pygame.display.flip()  # Show changes to screen
+            pygame.display.update(Global.dirty_rects)
+            Global.dirty_rects.()
         Global.clock.tick(Global.fps) # Limit fps of game
 
 

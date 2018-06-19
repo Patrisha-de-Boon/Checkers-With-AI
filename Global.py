@@ -13,6 +13,7 @@ WindowWidth = 500
 WindowHeight = 500
 boardType = 0  # default board type is 0 (the wooden one from this source http://www.vectorcopy.com/brown-wooden-chessboard-top-view-141-free-vector.html)
 checkerType = 0 # default board type is 0 (the wooden ones. The original unedited image came from here https://www.bearwood.com/product119.html)
+placeHolderType = 0 # default place holder type is 0 (blue sphere from https://openclipart.org/detail/292065/blue-sphere)
 
 # this is the list of all the main colours.
 BLACK = (0, 0, 0)
@@ -50,3 +51,6 @@ def get_image(path):
 boardImg = get_image(os.path.join('Assets','ChessBoard' + str(boardType) + '.jpg'))
 boardImgRect = boardImg.get_rect()
 boardImgRect.center = Width/2, Height/2
+
+# lists of rectangles that need to be drawn over
+dirty_rects = []
