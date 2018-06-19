@@ -35,6 +35,8 @@ Player2List  = pygame.sprite.Group()
 Player1Dict = {}
 Player2Dict = {}
 
+PlayerTurn = 1
+
 # the get_image function will load in the correct image for each enemy 
 # only once, and will store the image in a dictionary so that it doesn't have
 # to be loaded in pixel by pixel every time a new bullet is spawned. This code
@@ -50,7 +52,7 @@ def get_image(path):
 
 boardImg = get_image(os.path.join('Assets','ChessBoard' + str(boardType) + '.jpg'))
 boardImgRect = boardImg.get_rect()
-boardImgRect.center = Width/2, Height/2
+boardImgRect.center = (Width/2, Height/2)
 
 # lists of rectangles that need to be drawn over
-dirty_rects = []
+toUpdate = []
