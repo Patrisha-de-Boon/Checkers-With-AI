@@ -13,7 +13,7 @@ WindowWidth = 500
 WindowHeight = 500
 boardType = 0  # default board type is 0 (the wooden one from this source http://www.vectorcopy.com/brown-wooden-chessboard-top-view-141-free-vector.html)
 checkerType = 0 # default board type is 0 (the wooden ones. The original unedited image came from here https://www.bearwood.com/product119.html)
-placeHolderType = 0 # default place holder type is 0 (blue sphere from https://openclipart.org/detail/292065/blue-sphere)
+placeHolderType = 1 # default place holder type is 0 (blue sphere from https://openclipart.org/detail/292065/blue-sphere)
 PlayerTurn = 1
 
 # this is the list of all the main colours.

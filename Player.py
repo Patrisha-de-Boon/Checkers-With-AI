@@ -7,10 +7,11 @@ import Global   # import global variables
 
 class PlayerPiece(pygame.sprite.Sprite):
     class PlaceHolder(pygame.sprite.Sprite):
-        def __init__(self, x, y):
+        def __init__(self, x, y, player):
+            self.player = player
             self.x = x
             self.y = y
-            self.image = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'placeHolder' + str(Global.placeHolderType) + '.png')), (int(Global.boardImgRect.width/13), int(Global.boardImgRect.height/13)))
+            self.image = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'placeHolder' + str(Global.placeHolderType) + str(self.player) + '.png')), (int(Global.boardImgRect.width/11), int(Global.boardImgRect.height/11)))
             self.rect = self.image.get_rect()
             self.rect.center = (Global.boardImgRect.left + Global.boardImgRect.width/16 + x*Global.boardImgRect.width/9.135 - Global.boardImgRect.width/9/2, Global.boardImgRect.top + Global.boardImgRect.height/16 + (9-y)*Global.boardImgRect.height/9.14- Global.boardImgRect.height/9.14/2)
 
@@ -37,7 +38,7 @@ class PlayerPiece(pygame.sprite.Sprite):
                 # placeHolderImg = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'placeHolder' + str(Global.placeHolderType) + '.png')), (int(Global.boardImgRect.width/13), int(Global.boardImgRect.height/13)))
                 # placeHolderRect = placeHolderImg.get_rect()
                 # placeHolderRect.center = (Global.boardImgRect.left + Global.boardImgRect.width/16 + x*Global.boardImgRect.width/9.135 - Global.boardImgRect.width/9/2, Global.boardImgRect.top + Global.boardImgRect.height/16 + (9-y)*Global.boardImgRect.height/9.14- Global.boardImgRect.height/9.14/2)
-                placeHolder = self.PlaceHolder(x,y)
+                placeHolder = self.PlaceHolder(x,y, self.player)
                 screen.blit(placeHolder.image, placeHolder.rect)
                 Global.toUpdate.append(placeHolder.rect)
                 self.placeHolders[placeHolder] = (x,y)
@@ -47,7 +48,7 @@ class PlayerPiece(pygame.sprite.Sprite):
             # placeHolderImg = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'placeHolder' + str(Global.placeHolderType) + '.png')), (int(Global.boardImgRect.width/13), int(Global.boardImgRect.height/13)))
             # placeHolderRect = placeHolderImg.get_rect()
             # placeHolderRect.center = (Global.boardImgRect.left + Global.boardImgRect.width/16 + x*Global.boardImgRect.width/9.135 - Global.boardImgRect.width/9/2, Global.boardImgRect.top + Global.boardImgRect.height/16 + (9-y)*Global.boardImgRect.height/9.14- Global.boardImgRect.height/9.14/2)
-            placeHolder = self.PlaceHolder(x,y)
+            placeHolder = self.PlaceHolder(x,y, self.player)
             screen.blit(placeHolder.image, placeHolder.rect) # TODO: blit a different image for necessary moves
             Global.toUpdate.append(placeHolder.rect)
             self.placeHolders[placeHolder] = (x,y)
@@ -55,13 +56,14 @@ class PlayerPiece(pygame.sprite.Sprite):
     # select the piece and show all of its available moves
     def select(self, screen, canMove = True):
         self.isSelected = True
-        self.resize(screen)
         if canMove:
+            self.resize(screen)
             if not self.necessaryMoves:
                 self.showMoves(screen)
             else:
                 self.showMoves(screen, False)
-        #TODO: highlight red if you can't move them
+        else:
+            self.resize(screen, False)
     
     # deselect the piece and stop showing all of its available moves
     def deselect(self, screen, redraw = True):
@@ -134,6 +136,10 @@ class PlayerPiece(pygame.sprite.Sprite):
                 Global.Player2Dict[(self.x, self.y)] = self
 
             self.__place__(screen)
+    
+            if self.isSelected:
+                self.findMoves(screen)
+                self.showMoves(screen, False)
         
 
     # find and record all available moves for this piece
@@ -205,11 +211,14 @@ class PlayerPiece(pygame.sprite.Sprite):
             self.path = self.path + 'K'
 
     # resize the pieces according to the board image size and location, and draw them in the correct locations
-    def resize(self, screen):
-        if self.isSelected == False:
-            self.image = pygame.transform.scale(Global.get_image(self.path + '.png'), (int(Global.boardImgRect.width/10), int(Global.boardImgRect.height/10)))
+    def resize(self, screen, canMove = True):
+        if canMove:
+            if self.isSelected == False:
+                self.image = pygame.transform.scale(Global.get_image(self.path + '.png'), (int(Global.boardImgRect.width/10), int(Global.boardImgRect.height/10)))
+            else:
+                self.image = pygame.transform.scale(Global.get_image(self.path + 'H' + '.png'), (int(Global.boardImgRect.width/10), int(Global.boardImgRect.height/10)))
         else:
-            self.image = pygame.transform.scale(Global.get_image(self.path + 'H' + '.png'), (int(Global.boardImgRect.width/10), int(Global.boardImgRect.height/10)))
+            self.image = pygame.transform.scale(Global.get_image(self.path + 'R' + '.png'), (int(Global.boardImgRect.width/10), int(Global.boardImgRect.height/10)))
         self.rect = self.image.get_rect()
         self.__place__(screen)
 
