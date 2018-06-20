@@ -3,6 +3,20 @@ import sys     # let python use the file system
 import os      # help python identify the OS
 import Global  # includes variables meant to be common to multiple files
 
+# find all of the possible player moves, and show the necessary moves (ie. the capture moves)
+def findAllPlayerMoves(screen):
+    needToMove = []
+    if Global.PlayerTurn == 1:
+        PlayerPieces = Global.Player1List
+    elif Global.PlayerTurn == 2:
+        PlayerPieces = Global.Player2List
+    for piece in PlayerPieces: 
+        piece.findMoves(screen)
+        if piece.necessaryMoves:
+            needToMove.append(piece)
+    return needToMove
+    
+
 # completely redraw the entire screen and everything on it
 def redraw(screen, selectedPiece):
     screen.blit(Global.boardImg, Global.boardImgRect)
@@ -34,32 +48,53 @@ def resizeScreen(screen, event):
 
 # select and deselect player pieces according to user input
 def processMouseInput(screen, event, currPiece):
-    if currPiece is not None:
+    needToMove = findAllPlayerMoves(screen)
+    # if a piece is selected and either there are no necessary moves, or the selected piece must move
+    if currPiece is not None and (not needToMove or currPiece in needToMove):
         for Object in currPiece.placeHolders.keys():
             if Object.rect.collidepoint(event.pos):
                 x, y = currPiece.placeHolders[Object]
-                # x = int((rect.left - Global.boardImgRect.left - Global.boardImgRect.width/16 + Global.boardImgRect.width/9/2)/Global.boardImgRect.width*9.135)
-                # y = int((rect.top - Global.boardImgRect.top - Global.boardImgRect.height/16 + Global.boardImgRect.height/9.14/2)/Global.boardImgRect.height*9.14)
                 currPiece.move(screen, x, y)
+                necessaryMoves = []
+                if currPiece.isSelected:
+                    currPiece.findMoves(screen)
+                    necessaryMoves = currPiece.necessaryMoves.keys()
+                # if no moves are necessary, it is the next player's turn
+                if not necessaryMoves or not currPiece.isSelected:
+                    if Global.PlayerTurn == 1:
+                        Global.PlayerTurn = 2
+                    else:
+                        Global.PlayerTurn = 1
+                    currPiece.deselect(screen)
+                    return None
                 return currPiece
 
-    if Global.PlayerTurn == 1:        
+    if Global.PlayerTurn == 1:    
         for piece in Global.Player1List:
             if piece.rect.collidepoint(event.pos):
                 if piece != currPiece:
                     if currPiece is not None:
                         currPiece.deselect(screen)
-                    piece.select(screen)
+                    if piece in needToMove or not needToMove:
+                        piece.findMoves(screen)
+                        piece.select(screen)
+                    else:
+                        piece.select(screen, canMove = False)
                     return piece
 
-    elif Global.playerTurn == 2:
+    elif Global.PlayerTurn == 2:
         for piece in Global.Player2List:
             if piece.rect.collidepoint(event.pos):
                 if piece != currPiece:
                     if currPiece is not None:
                         currPiece.deselect(screen)
-                    piece.select(screen)
+                    if piece in needToMove or not needToMove:
+                        piece.findMoves(screen)
+                        piece.select(screen)
+                    else:
+                        piece.select(screen, canMove = False)
                     return piece
+
     if currPiece is not None:
         currPiece.deselect(screen)
     return None
