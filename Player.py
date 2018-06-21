@@ -9,7 +9,7 @@ class PlayerPiece(pygame.sprite.Sprite):
             self.player = player
             self.x = x
             self.y = y
-            self.image = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'placeHolder' + str(Global.placeHolderType) + str(self.player) + '.png')), (int(Global.boardImgRect.width/11), int(Global.boardImgRect.height/11)))
+            self.image = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'Placeholders', 'placeHolder' + str(Global.placeHolderType) + str(self.player) + '.png')), (int(Global.boardImgRect.width/11), int(Global.boardImgRect.height/11)))
             self.rect = self.image.get_rect()
             self.rect.center = (Global.boardImgRect.left + Global.boardImgRect.width/16 + x*Global.boardImgRect.width/9.135 - Global.boardImgRect.width/9/2, Global.boardImgRect.top + Global.boardImgRect.height/16 + (9-y)*Global.boardImgRect.height/9.14- Global.boardImgRect.height/9.14/2)
 
@@ -18,16 +18,16 @@ class PlayerPiece(pygame.sprite.Sprite):
         self.player = PlayerNum
         self.x = x
         self.y = y
-        self.path = os.path.join('Assets','Checker' + str(PlayerNum) + str(Global.checkerType))
+        self.path = os.path.join('Assets','Pieces', 'Checker' + str(Global.checkerType), 'Checker' + str(PlayerNum) + str(Global.checkerType))
         self.image = Global.get_image(self.path + '.png')
         self.image = pygame.transform.scale(self.image, (int(Global.boardImgRect.width/10), int(Global.boardImgRect.height/10)))
         self.rect  = self.image.get_rect()
         self.__place__(screen)
-        self.availableMoves = []
+        self.availableMoves = [] # list of open spaces to move to
         self.necessaryMoves = {} # maps possible location of this piece to the location of the piece it will capture to get there
         self.isKing = False
         self.isSelected = False
-        self.placeHolders = {}
+        self.placeHolders = {} # 
 
     def showMoves(self, screen, all = True):
         if all:
@@ -67,6 +67,7 @@ class PlayerPiece(pygame.sprite.Sprite):
     def deselect(self, screen, redraw = True):
         self.isSelected = False
         for Object in self.placeHolders.keys():
+             # update rect in case of resizing the screen
             ############# WHY DOES THIS NOT WORK ?!?!?!?!? ##############
             # tempRect = (Object.rect.left, Object.rect.top, Object.rect.width, Object.rect.height)
             # screen.blit(Global.boardImg, Global.boardImgRect, tempRect) # blit section of board image over the placeholder
@@ -219,6 +220,11 @@ class PlayerPiece(pygame.sprite.Sprite):
             self.image = pygame.transform.scale(Global.get_image(self.path + 'R' + '.png'), (int(Global.boardImgRect.width/10), int(Global.boardImgRect.height/10)))
         self.rect = self.image.get_rect()
         self.__place__(screen)
+        if self.isSelected:
+            for Object in self.placeHolders:
+                Object.image = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'placeHolder' + str(Global.placeHolderType) + str(self.player) + '.png')), (int(Global.boardImgRect.width/11), int(Global.boardImgRect.height/11)))
+                Object.rect = self.image.get_rect()
+                Object.rect.center = (Global.boardImgRect.left + Global.boardImgRect.width/16 + Object.x*Global.boardImgRect.width/9.135 - Global.boardImgRect.width/9/2, Global.boardImgRect.top + Global.boardImgRect.height/16 + (9-Object.y)*Global.boardImgRect.height/9.14- Global.boardImgRect.height/9.14/2)
 
     # place the pieces according to their x and y location on the board.
     def __place__(self, screen):

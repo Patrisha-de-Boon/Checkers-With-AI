@@ -37,9 +37,9 @@ def resizeScreen(screen, width, height):
     Global.Height = height
     Global.drawBackground(screen, Global.backImg)
     if height <= width:
-        Global.boardImg = pygame.transform.scale(Global.get_image(os.path.join('Assets','ChessBoard' + str(Global.boardType) + '.jpg')), (int(9*height/10), int(9*height/10)))
+        Global.boardImg = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'Boards', 'Board' + str(Global.boardType) + '.jpg')), (int(9*height/10), int(9*height/10)))
     else:
-        Global.boardImg = pygame.transform.scale(Global.get_image(os.path.join('Assets','ChessBoard' + str(Global.boardType) + '.jpg')), (int(9*width/10), int(9*width/10)))
+        Global.boardImg = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'Boards', 'Board' + str(Global.boardType) + '.jpg')), (int(9*width/10), int(9*width/10)))
     Global.boardImgRect = Global.boardImg.get_rect()
     Global.boardImgRect.center = (Global.Width/2, Global.Height/2)
     for piece in Global.Player1List:

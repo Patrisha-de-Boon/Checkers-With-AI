@@ -6,3 +6,5 @@ CheckerType 0 is from here https://www.bearwood.com/product119.html
 the get_image function came from this source https://nerdparadise.com/programming/pygame/part2.
 woodTextures 1 through 4 came from http://graphicdesignjunction.com/2013/03/seamless-high-qualtity-wood-textures/ 
 woodTexture 5 came from https://www.dreamstime.com/stock-photo-light-wood-background-texture-plank-table-close-up-wooden-floo-board-image93451396 
+background6 came from https://www.sketchuptextureclub.com/search-textures 
+background7 came from https://hugolj.deviantart.com/art/White-Marble-Seamless-500951078 

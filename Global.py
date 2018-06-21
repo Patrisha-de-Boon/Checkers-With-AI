@@ -53,18 +53,25 @@ def get_image(path):
                 _image_library[path] = image
         return image
 
-boardImg = get_image(os.path.join('Assets','ChessBoard' + str(boardType) + '.jpg'))
+boardImg = get_image(os.path.join('Assets', 'Boards', 'Board' + str(boardType) + '.jpg'))
 boardImgRect = boardImg.get_rect()
 boardImgRect.center = (Width/2, Height/2)
 
-backImg = get_image(os.path.join('Assets','background' + str(backgroundType) + '.jpg'))
+backImg = get_image(os.path.join('Assets', 'Backgrounds', 'background' + str(backgroundType) + '.jpg'))
 
 def drawBackground(screen, Image):
         rect = Image.get_rect()
+        if rect.width > Width or rect.height > Height:
+                Ratio = rect.width/rect.height
+                if rect.width>Width:
+                        Image = pygame.transform.scale(Image, (Width, int(Width/Ratio)))
+                else:
+                        Image = pygame.transform.scale(Image, (int(Height*Ratio), Height))
+                rect = Image.get_rect()
         rect.left = 0
         rect.top = 0
-        while rect.left < Width:
-                while rect.top < Height:
+        while rect.left <= Width:
+                while rect.top <= Height:
                         screen.blit(Image, rect)
                         pygame.display.update(rect)
                         rect.top += rect.height

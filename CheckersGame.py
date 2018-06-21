@@ -13,6 +13,7 @@ screen = pygame.display.set_mode((720, 720))
 import Global
 import GameState
 import Player
+import MenuState
 
 Global.DisplayHeight = DisplayInfo.current_h
 Global.DisplayWidth = DisplayInfo.current_w
@@ -36,6 +37,7 @@ pygame.display.set_caption("ChAI - Checkers with AI")
 # the functional state machine states are defined below
 Quit = False
 State = 0
+toMenu = False
 
 while not Quit:
 
@@ -46,27 +48,16 @@ while not Quit:
             quit = True
             break
 
-        elif event.type == pygame.KEYDOWN:
-            # enter the pause screen if they press escape in game
-            if State == 4 and event.key == pygame.K_ESCAPE:
-                State = 7
-        elif event.type == pygame.VIDEORESIZE:
-            pass
-        #     screen = pygame.display.set_mode(event.dict['size'], pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
-        #     screen.blit(pygame.transform.scale(Global.boardImg, event.dict['size']), (0, 0))
-        #     Global.Width = event.w
-        #     Global.Height = event.h
-        #     pygame.display.flip()
-
     # Start
     if State == 0:
         # Show splash screen and start screen
         State = 6  # TODO: change this to State == 1 when MainMenu is implemented
+        # toMenu = True
 
     # MainMenu
     if  State == 1:
-        #State = MainMenuState(screen)
-        pass
+        toMenu = False
+        State = MenuState.RunMenu(screen)
 
     # Settings
     if State == 2:
@@ -124,7 +115,10 @@ while not Quit:
                 Global.Player2List.add(Player2Piece)
                 Global.Player2Dict[i, 7] = Player2Piece
 
-        State = 4 # go to the game state
+        if toMenu:
+            State = 1
+        else:
+            State = 4 # go to the game state
 
     # Pause
     if State == 7:
