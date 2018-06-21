@@ -25,11 +25,11 @@ if Global.Width < Global.Height:
     measurement = Global.Width
 else:
     measurement = Global.Height
-Global.boardImg = pygame.transform.scale(Global.get_image(os.path.join('Assets','ChessBoard' + str(Global.boardType) + '.jpg')), (measurement, measurement))
-Global.boardImgRect = Global.boardImg.get_rect()
-Global.boardImgRect.center = (Global.Width/2, Global.Height/2)
+# Global.boardImg = pygame.transform.scale(Global.get_image(os.path.join('Assets','ChessBoard' + str(Global.boardType) + '.jpg')), (int(9*measurement/10), int(9*measurement/10)))
+# Global.boardImgRect = Global.boardImg.get_rect()
+# Global.boardImgRect.center = (Global.Width/2, Global.Height/2)
 
-screen.fill(Global.BLACK) # draw background
+# Global.drawBackground(screen, Global.backImg) # draw the background
 backdropbox = screen.get_rect()
 pygame.display.set_caption("ChAI - Checkers with AI")
 
@@ -51,11 +51,12 @@ while not Quit:
             if State == 4 and event.key == pygame.K_ESCAPE:
                 State = 7
         elif event.type == pygame.VIDEORESIZE:
-            screen = pygame.display.set_mode(event.dict['size'], pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
-            screen.blit(pygame.transform.scale(Global.boardImg, event.dict['size']), (0, 0))
-            Global.Width = event.w
-            Global.Height = event.h
-            pygame.display.flip()
+            pass
+        #     screen = pygame.display.set_mode(event.dict['size'], pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+        #     screen.blit(pygame.transform.scale(Global.boardImg, event.dict['size']), (0, 0))
+        #     Global.Width = event.w
+        #     Global.Height = event.h
+        #     pygame.display.flip()
 
     # Start
     if State == 0:

@@ -13,8 +13,9 @@ WindowWidth = 500
 WindowHeight = 500
 boardType = 0  # default board type is 0 (the wooden one from this source http://www.vectorcopy.com/brown-wooden-chessboard-top-view-141-free-vector.html)
 checkerType = 0 # default board type is 0 (the wooden ones. The original unedited image came from here https://www.bearwood.com/product119.html)
-placeHolderType = 1 # default place holder type is 0 (blue sphere from https://openclipart.org/detail/292065/blue-sphere)
+placeHolderType = 1 # default place holder type is 1 (edited version of checker type)
 PlayerTurn = 1
+backgroundType = 0
 
 # this is the list of all the main colours.
 BLACK = (0, 0, 0)
@@ -55,5 +56,20 @@ def get_image(path):
 boardImg = get_image(os.path.join('Assets','ChessBoard' + str(boardType) + '.jpg'))
 boardImgRect = boardImg.get_rect()
 boardImgRect.center = (Width/2, Height/2)
+
+backImg = get_image(os.path.join('Assets','background' + str(backgroundType) + '.jpg'))
+
+def drawBackground(screen, Image):
+        rect = Image.get_rect()
+        rect.left = 0
+        rect.top = 0
+        while rect.left < Width:
+                while rect.top < Height:
+                        screen.blit(Image, rect)
+                        pygame.display.update(rect)
+                        rect.top += rect.height
+                rect.left += rect.width
+                rect.top = 0
+        
 
 
