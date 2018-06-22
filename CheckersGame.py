@@ -52,7 +52,7 @@ while not Quit:
     if State == 0:
         # Show splash screen and start screen
         State = 6  # TODO: change this to State == 1 when MainMenu is implemented
-        # toMenu = True
+        toMenu = True
 
     # MainMenu
     if  State == 1:
