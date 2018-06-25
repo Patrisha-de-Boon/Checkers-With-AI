@@ -6,8 +6,8 @@ DisplayHeight = 0
 DisplayWidth = 0
 
 #attributes of game screen
-Height = 0
-Width = 0
+Height = 720
+Width = 1080
 
 WindowWidth = 500
 WindowHeight = 500
@@ -16,6 +16,7 @@ checkerType = 0 # default board type is 0 (the wooden ones. The original unedite
 placeHolderType = 1 # default place holder type is 1 (edited version of checker type)
 PlayerTurn = 1
 backgroundType = 0
+fullscreen = pygame.FULLSCREEN
 
 # this is the list of all the main colours.
 BLACK = (0, 0, 0)
@@ -59,24 +60,24 @@ boardImgRect.center = (Width/2, Height/2)
 
 backImg = get_image(os.path.join('Assets', 'Backgrounds', 'background' + str(backgroundType) + '.jpg'))
 
-def drawBackground(screen, Image):
-        rect = Image.get_rect()
+def drawBackground(screen):
+        backImg = get_image(os.path.join('Assets', 'Backgrounds', 'background' + str(backgroundType) + '.jpg'))
+        rect = backImg.get_rect()
         if rect.width > Width or rect.height > Height:
                 Ratio = rect.width/rect.height
                 if rect.width>Width:
-                        Image = pygame.transform.scale(Image, (Width, int(Width/Ratio)))
+                        backImg = pygame.transform.scale(backImg, (Width, int(Width/Ratio)))
                 else:
-                        Image = pygame.transform.scale(Image, (int(Height*Ratio), Height))
-                rect = Image.get_rect()
+                        backImg = pygame.transform.scale(backImg, (int(Height*Ratio), Height))
+                rect = backImg.get_rect()
         rect.left = 0
         rect.top = 0
         while rect.left <= Width:
                 while rect.top <= Height:
-                        screen.blit(Image, rect)
+                        screen.blit(backImg, rect)
                         pygame.display.update(rect)
                         rect.top += rect.height
                 rect.left += rect.width
                 rect.top = 0
-        
 
 

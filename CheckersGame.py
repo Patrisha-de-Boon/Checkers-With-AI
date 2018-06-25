@@ -7,7 +7,7 @@ pygame.init()  # initialize module
 # record monitor information
 DisplayInfo = pygame.display.Info()
 # create screen surface on
-screen = pygame.display.set_mode((720, 720)) 
+screen = pygame.display.set_mode((720, 1080), pygame.FULLSCREEN) 
 
 # import gloabl after initializing pygame and screen
 import Global
@@ -15,11 +15,12 @@ import GameState
 import Player
 import MenuState
 
+# default to full screen, but this can be changes later in settings
 Global.DisplayHeight = DisplayInfo.current_h
 Global.DisplayWidth = DisplayInfo.current_w
-# default to full screen, but this can be changes later in settings
-Global.Width = 720
+
 Global.Height = 720
+Global.Width = 1080
 
 # which to draw things
 if Global.Width < Global.Height:
