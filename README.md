@@ -1,1 +1,1 @@
-# Chess With AI
+# Checkers With AI
