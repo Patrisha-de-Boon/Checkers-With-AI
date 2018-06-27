@@ -1,0 +1,10 @@
+background0 is from this source https://www.sketchuptextureclub.com/textures/architecture/wood 
+Crown 0 is from the following link <div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div> 
+blue sphere from https://openclipart.org/detail/292065/blue-sphere 
+boardType 0 is from http://www.vectorcopy.com/brown-wooden-chessboard-top-view-141-free-vector.html 
+CheckerType 0 is from here https://www.bearwood.com/product119.html
+the get_image function came from this source https://nerdparadise.com/programming/pygame/part2.
+woodTextures 1 through 4 came from http://graphicdesignjunction.com/2013/03/seamless-high-qualtity-wood-textures/ 
+woodTexture 5 came from https://www.dreamstime.com/stock-photo-light-wood-background-texture-plank-table-close-up-wooden-floo-board-image93451396 
+background6 came from https://www.sketchuptextureclub.com/search-textures 
+background7 came from https://hugolj.deviantart.com/art/White-Marble-Seamless-500951078 
