@@ -2,6 +2,7 @@ import pygame  # load pygame keywords
 import sys     # let python use the file system
 import os      # help python identify the OS
 import Global  # includes variables meant to be common to multiple files
+import time
 
 # find all of the possible player moves, and show the necessary moves (ie. the capture moves)
 def findAllPlayerMoves(screen):
@@ -19,7 +20,11 @@ def findAllPlayerMoves(screen):
 
 # completely redraw the entire screen and everything on it
 def redraw(screen, selectedPiece):
+    screen.blit(Global.get_image(os.path.join('Assets', 'Backgrounds', 'background0.jpg')), gameTimeRect)
+    screen.blit(Global.get_image(os.path.join('Assets', 'Backgrounds', 'background0.jpg')), roundTimeRect)
     screen.blit(Global.boardImg, Global.boardImgRect)
+    screen.blit(gameTimeText, gameTimeRect)
+    screen.blit(roundTimeText, roundTimeRect)
     if selectedPiece is not None:
         selectedPiece.select(screen)
     # draw the player pieces
@@ -47,10 +52,22 @@ def resizeScreen(screen, width, height):
     for piece in Global.Player2List:
         piece.resize(screen)
     
+    global clockFont
+    global gameTimeText
+    global roundTimeText
+    global gameTimeRect
+    global roundTimeRect
+    
+    clockSize = int(Global.Height/9)
+    clockFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), clockSize)
+    gameTimeText = clockFont.render(str(int(Global.GameTime/60)) + ':' + str(Global.GameTime%60).zfill(2), True, Global.BLACK)
+    roundTimeText = clockFont.render(str(int(Global.roundTime/60))+ ':' + str(Global.roundTime%60).zfill(2), True, Global.BLACK)
+    gameTimeRect = pygame.Rect(Global.Width - Global.boardImgRect.left/2 - (clockFont.size(str(int(Global.GameTime/60)) + ':' + str(Global.GameTime%60).zfill(2))[0])/2, Global.Height/2 - clockSize/2, clockFont.size(str(int(Global.GameTime/60)) + ':' + str(Global.GameTime%60).zfill(2))[0], clockFont.size(str(int(Global.GameTime/60)) + ':' + str(Global.GameTime%60).zfill(2))[1])
+    roundTimeRect = pygame.Rect((Global.Width - Global.boardImgRect.right)/2 - (clockFont.size(str(int(Global.roundTime/60))+ ':' + str(Global.roundTime%60).zfill(2))[0])/2, Global.Height/2 - clockSize/2, clockFont.size(str(int(Global.roundTime/60))+ ':' + str(Global.roundTime%60).zfill(2))[0], clockFont.size(str(int(Global.roundTime/60))+ ':' + str(Global.roundTime%60).zfill(2))[1])
+
 
 # select and deselect player pieces according to user input
-def processMouseInput(screen, event, currPiece):
-    needToMove = findAllPlayerMoves(screen)
+def processMouseInput(screen, event, currPiece, needToMove):
     # if a piece is selected and either there are no necessary moves, or the selected piece must move
     if currPiece is not None and (not needToMove or currPiece in needToMove):
         for Object in currPiece.placeHolders.keys():
@@ -107,6 +124,9 @@ def RunGame(screen):
     selectedPiece = None
     resizeScreen(screen, Global.Width, Global.Height)
     redraw(screen, selectedPiece)
+    LastSwitch = time.time() # Last time the player turn switched
+    LastTick = time.time() # Last time the timer increased
+    needToMove = findAllPlayerMoves(screen)
 
     while not Quit:
         redrawFlag = False
@@ -129,9 +149,52 @@ def RunGame(screen):
             
             # select and deselect pieces according to the user input
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                selectedPiece = processMouseInput(screen, event, selectedPiece)
+                startPlayer = Global.PlayerTurn
+                selectedPiece = processMouseInput(screen, event, selectedPiece, needToMove)
+                if startPlayer != Global.PlayerTurn:
+                    needToMove = findAllPlayerMoves(screen)
+                    # reset the roundTime
+                    if needToMove:
+                        Global.roundTime = 60
+                    else:
+                        Global.roundTime = 5*60 + 1
+
                 redrawFlag = True
-                
+        
+        # If it has been a second since the last tick, count the game timer up
+        if time.time() - LastTick > 1:
+            LastTick = time.time()
+            Global.GameTime += 1
+            Global.roundTime -= 1
+            gameTimeText = clockFont.render(str(int(Global.GameTime/60)) + ':' + str(Global.GameTime%60).zfill(2), True, Global.BLACK)
+            roundTimeText = clockFont.render(str(int(Global.roundTime/60))+ ':' + str(Global.roundTime%60).zfill(2), True, Global.BLACK)
+            Global.toUpdate.append(gameTimeRect)
+            Global.toUpdate.append(roundTimeRect)
+            screen.blit(Global.get_image(os.path.join('Assets', 'Backgrounds', 'background0.jpg')), gameTimeRect)
+            screen.blit(Global.get_image(os.path.join('Assets', 'Backgrounds', 'background0.jpg')), roundTimeRect)
+            screen.blit(Global.boardImg, Global.boardImgRect)
+            screen.blit(gameTimeText, gameTimeRect)
+            screen.blit(roundTimeText, roundTimeRect)
+            redrawFlag = True
+            # if the player has used all time in a round, I chose to just let skip the player's turn
+            if Global.roundTime <= 0:
+                # deselect the piece if necessary
+                if selectedPiece is not None:
+                    selectedPiece.deselect(screen)
+                    selectedPiece = None
+
+                # skip the player's turn
+                if Global.PlayerTurn == 1:
+                    Global.PlayerTurn = 2
+                else:
+                    Global.PlayerTurn = 1
+                needToMove = findAllPlayerMoves(screen)
+
+                # reset the roundTime
+                if needToMove:
+                    Global.roundTime = 60
+                else:
+                    Global.roundTime = 5*60 + 1
 
         # redraw the board and pieces when necessary
         if redrawFlag:

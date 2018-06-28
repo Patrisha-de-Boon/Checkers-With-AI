@@ -29,6 +29,8 @@ DARKBLUE = (16,24,115)
 
 fps = 60 # max fps of game (not really necessary here but good practice)
 clock = pygame.time.Clock() # game clock
+GameTime = 0
+roundTime = 5*60
 
 # sprite list for each player's pieces
 Player1List  = pygame.sprite.Group()
