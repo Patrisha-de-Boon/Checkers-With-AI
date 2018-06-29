@@ -5,10 +5,12 @@ import Global  # includes variables meant to be common to multiple files
 import itertools # includes extra tools for iterating through items
 
 # completely redraw the entire screen and everything on it
-def redraw(screen, selectedPiece):
+def redraw(screen, selectedPiece, currentGame):
     Global.drawBackground(screen)
     screen.blit(Global.boardImg, Global.boardImgRect)
     screen.blit(titleText, (Global.boardImgRect.left, int(Global.boardImgRect.top/2 - titleSize/2)))
+    if currentGame:
+        screen.blit(continueGameText, continueGameRect)
     screen.blit(newGameText, newGameRect)
     screen.blit(loadGameText, loadGameRect)
     screen.blit(pieceText, pieceRect)
@@ -25,7 +27,7 @@ def redraw(screen, selectedPiece):
     Global.toUpdate.clear()
 
 # resize the screen and the items on it according to the user's manipulation of the screen size
-def resizeScreen(screen, width, height):
+def resizeScreen(screen, width, height, currentGame):
     screen = pygame.display.set_mode((width, height), pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
     Global.Width = width
     Global.Height = height
@@ -49,6 +51,7 @@ def resizeScreen(screen, width, height):
     global startFont
     global itemFont
     global newGameText
+    global continueGameText
     global loadGameText
     global boardText
     global pieceText
@@ -57,6 +60,7 @@ def resizeScreen(screen, width, height):
     startSize = int(Global.Height/16)
     startFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), startSize)
     newGameText = startFont.render("Start New Game", True, Global.BLACK)
+    continueGameText = startFont.render("Continue Game", True, Global.BLACK)
 
     itemSize = int(Global.Height/20)
     itemFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), itemSize)
@@ -67,19 +71,27 @@ def resizeScreen(screen, width, height):
 
     global startRect
     global newGameRect
+    global continueGameRect
     global loadGameRect
     global pieceRect
     global backgroundRect
     global boardRect
 
     newGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - startFont.size("Start New Game")[0], Global.boardImgRect.top, startFont.size("Start New Game")[0], startFont.size("Start New Game")[1])
-    loadGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Load Saved Game")[0], Global.boardImgRect.top + startSize + Global.boardImgRect.height/16, itemFont.size("Load Saved Game")[0], itemFont.size("Load Saved Game")[1]) 
-    pieceRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Checker Pieces")[0], Global.boardImgRect.top + startSize + itemSize + Global.boardImgRect.height/8, itemFont.size("Checker Pieces")[0], itemFont.size("Checker Pieces")[1])
-    backgroundRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Background")[0], Global.boardImgRect.top + startSize + itemSize*2 + 3*Global.boardImgRect.height/16, itemFont.size("Background")[0], itemFont.size("Background")[1])
-    boardRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Board")[0], Global.boardImgRect.top + startSize + itemSize*3 + Global.boardImgRect.height/4, itemFont.size("Board")[0], itemFont.size("Board")[1])
+    if not currentGame:
+        loadGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Load Saved Game")[0], Global.boardImgRect.top + startSize + Global.boardImgRect.height/16, itemFont.size("Load Saved Game")[0], itemFont.size("Load Saved Game")[1]) 
+        pieceRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Checker Pieces")[0], Global.boardImgRect.top + startSize + itemSize + Global.boardImgRect.height/8, itemFont.size("Checker Pieces")[0], itemFont.size("Checker Pieces")[1])
+        backgroundRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Background")[0], Global.boardImgRect.top + startSize + itemSize*2 + 3*Global.boardImgRect.height/16, itemFont.size("Background")[0], itemFont.size("Background")[1])
+        boardRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Board")[0], Global.boardImgRect.top + startSize + itemSize*3 + Global.boardImgRect.height/4, itemFont.size("Board")[0], itemFont.size("Board")[1])
+    else:
+        continueGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - startFont.size("Continue Game")[0], Global.boardImgRect.top + startSize + Global.boardImgRect.height/16, startFont.size("Continue Game")[0], startFont.size("Continue Game")[1]) 
+        loadGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Load Saved Game")[0], Global.boardImgRect.top + startSize*2 + Global.boardImgRect.height/8, itemFont.size("Load Saved Game")[0], itemFont.size("Load Saved Game")[1]) 
+        pieceRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Checker Pieces")[0], Global.boardImgRect.top + startSize*2 + itemSize + 3*Global.boardImgRect.height/16, itemFont.size("Checker Pieces")[0], itemFont.size("Checker Pieces")[1])
+        backgroundRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Background")[0], Global.boardImgRect.top + startSize*2 + itemSize*2 + Global.boardImgRect.height/4, itemFont.size("Background")[0], itemFont.size("Background")[1])
+        boardRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Board")[0], Global.boardImgRect.top + startSize*2 + itemSize*3 + 5*Global.boardImgRect.height/16, itemFont.size("Board")[0], itemFont.size("Board")[1])
 
 # select and deselect menu items according to user input
-def processMouseInput(screen, event, currPiece):
+def processMouseInput(screen, event, currPiece, currentGame):
     # select pieces to show moves and how it all looks together
     for piece in itertools.chain(Global.Player1List, Global.Player2List):
         if piece.rect.collidepoint(event.pos):
@@ -92,8 +104,11 @@ def processMouseInput(screen, event, currPiece):
     if currPiece is not None:
         currPiece.deselect(screen)
 
+    if currentGame:
+        if continueGameRect.collidepoint(event.pos):
+            return True, 4
     if newGameRect.collidepoint(event.pos):
-        return True, 4
+        return True, 6
     elif loadGameRect.collidepoint(event.pos):
         return True, 8
     elif pieceRect.collidepoint(event.pos):
@@ -105,11 +120,11 @@ def processMouseInput(screen, event, currPiece):
 
     return False, None
 
-def RunMenu(screen, CurrentGame):
+def RunMenu(screen, currentGame):
     Quit = False
     selectedPiece = None
-    resizeScreen(screen, Global.Width, Global.Height)
-    redraw(screen, selectedPiece)
+    resizeScreen(screen, Global.Width, Global.Height, currentGame)
+    redraw(screen, selectedPiece, currentGame)
 
     while not Quit:
         redrawFlag = False
@@ -121,12 +136,12 @@ def RunMenu(screen, CurrentGame):
             
             # resize the board and the pieces according to the user's manipulation of the screen size
             elif event.type == pygame.VIDEORESIZE:
-                resizeScreen(screen, event.w, event.h)
-                redraw(screen, selectedPiece)
+                resizeScreen(screen, event.w, event.h, currentGame)
+                redraw(screen, selectedPiece, currentGame)
             
             # select and deselect pieces according to the user input
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                changeState, x = processMouseInput(screen, event, selectedPiece)
+                changeState, x = processMouseInput(screen, event, selectedPiece, currentGame)
                 if changeState:
                     return x
                     pass
@@ -139,7 +154,7 @@ def RunMenu(screen, CurrentGame):
                         Global.backgroundType += 1
                         if Global.backgroundType > 6:
                             Global.backgroundType = 0
-                        redraw(screen, selectedPiece)
+                        redraw(screen, selectedPiece, currentGame)
 
                     elif x == 2:
                         Global.boardType += 1
@@ -151,7 +166,7 @@ def RunMenu(screen, CurrentGame):
                         Global.boardImg = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'Boards', 'Board' + str(Global.boardType) + '.png')), newBoardSize)
                         screen.blit(Global.boardImg, Global.boardImgRect)
                         for piece in Global.Player1List:
-                            piece.resize(screen)
+                            piece.resize(screen, currentGame)
                         for piece in Global.Player2List:
                             piece.resize(screen)
                         pygame.display.update(Global.boardImgRect)

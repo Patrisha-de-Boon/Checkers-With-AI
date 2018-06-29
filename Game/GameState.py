@@ -3,6 +3,7 @@ import sys     # let python use the file system
 import os      # help python identify the OS
 import Global  # includes variables meant to be common to multiple files
 import time
+import SaveAndLoad
 
 # find all of the possible player moves, and show the necessary moves (ie. the capture moves)
 def findAllPlayerMoves(screen):
@@ -70,8 +71,6 @@ def resizeScreen(screen, width, height):
     roundTimeText = clockFont.render(str(int(Global.roundTime/60))+ ':' + str(Global.roundTime%60).zfill(2), True, Global.BLACK)
     gameTimeRect = pygame.Rect(Global.Width - Global.boardImgRect.left/2 - (clockFont.size('0:00')[0])/2, Global.Height/2 - clockSize/2, clockFont.size('0:00')[0], clockSize)
     roundTimeRect = pygame.Rect((Global.Width - Global.boardImgRect.right)/2 - (clockFont.size('0:00')[0])/2, Global.Height/2 - clockSize/2, clockFont.size('0:00')[0], clockSize)
-    print(gameTimeRect)
-    print(roundTimeRect)
 
 # select and deselect player pieces according to user input
 def processMouseInput(screen, event, currPiece, needToMove):
@@ -126,9 +125,8 @@ def processMouseInput(screen, event, currPiece, needToMove):
     return None
 
 # Run the Game
-def RunGame(screen):
+def RunGame(screen, selectedPiece = None):
     Quit = False
-    selectedPiece = None
     LastSwitch = time.time() # Last time the player turn switched
     LastTick = time.time() # Last time the timer increased
     needToMove = findAllPlayerMoves(screen) # list of necessary moves for the current player
@@ -141,6 +139,7 @@ def RunGame(screen):
 
     while not Quit:
         redrawFlag = False
+
         # handle player input
         for event in pygame.event.get():
             # quit the game if the user presses the x button on the window
@@ -150,6 +149,7 @@ def RunGame(screen):
 
             # enter the pause screen if the user presses escape in game
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                SaveAndLoad.SaveGame(0, Global.PlayerTurn, Global.Player1List, Global.Player2List, Global.roundTime, Global.GameTime)
                 Quit = True
                 return 7
 
@@ -209,7 +209,9 @@ def RunGame(screen):
             
         Global.clock.tick(Global.fps) # Limit fps of game
 
-        if not Global.Player1Dict or not Global.Player1Dict:
+        # If the player
+        if not Global.Player1Dict or not Global.Player2Dict:
+            print("Game Over")
             Quit = True
             return 5
 

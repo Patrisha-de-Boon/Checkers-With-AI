@@ -14,6 +14,7 @@ import Global
 import GameState
 import Player
 import MenuState
+import SaveAndLoad
 
 # default to full screen, but this can be changes later in settings
 Global.DisplayHeight = DisplayInfo.current_h
@@ -53,7 +54,7 @@ while not Quit:
     # Start
     if State == 0:
         # Show splash screen and start screen
-        State = 6  # TODO: change this to State == 1 when MainMenu is implemented
+        State = 6
         toMenu = True
 
     # MainMenu
@@ -131,13 +132,11 @@ while not Quit:
     if State == 7:
         #State = PauseState(screen)
         State = 1
-        pass
 
-    # Load
+    # Load a Game
     if State == 8:
-        #State = LoadState(screen)
-        State = 4
-        pass
+        selectedPiece = SaveAndLoad.LoadGame(screen, 0)
+        State = GameState.RunGame(screen, selectedPiece)
     
     # Quit
     if State == 9:
