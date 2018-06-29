@@ -135,8 +135,10 @@ while not Quit:
 
     # Load a Game
     if State == 8:
-        selectedPiece = SaveAndLoad.LoadGame(screen, 0)
-        State = GameState.RunGame(screen, selectedPiece)
+        State = SaveAndLoad.LoadState(screen)
+        #print(State)
+        # selectedPiece = SaveAndLoad.LoadGame(screen, 0)
+        # State = GameState.RunGame(screen, selectedPiece)
     
     # Quit
     if State == 9:

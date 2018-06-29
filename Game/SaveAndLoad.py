@@ -89,5 +89,12 @@ def LoadGame(screen, SaveNumber):
     return selectedPiece
 
 # desplay the current saved games that can be loaded
-# def LoadState(screen):
-
+def LoadState(screen):
+    MustRewrite = False
+    FileList = os.listdir(os.path.join('Saves'))
+    NumFiles = len(FileList)
+    if NumFiles > 10:
+        MustRewrite = True
+    for name in FileList:
+        print(name)
+    return 4
