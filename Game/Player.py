@@ -222,7 +222,7 @@ class PlayerPiece(pygame.sprite.Sprite):
         self.__place__(screen)
         if self.isSelected:
             for Object in self.placeHolders:
-                Object.image = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'placeHolder' + str(Global.placeHolderType) + str(self.player) + '.png')), (int(Global.boardImgRect.width/11), int(Global.boardImgRect.height/11)))
+                Object.image = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'Placeholders', 'placeHolder' + str(Global.placeHolderType) + str(self.player) + '.png')), (int(Global.boardImgRect.width/11), int(Global.boardImgRect.height/11)))
                 Object.rect = self.image.get_rect()
                 Object.rect.center = (Global.boardImgRect.left + Global.boardImgRect.width/16 + Object.x*Global.boardImgRect.width/9.135 - Global.boardImgRect.width/9/2, Global.boardImgRect.top + Global.boardImgRect.height/16 + (9-Object.y)*Global.boardImgRect.height/9.14- Global.boardImgRect.height/9.14/2)
 
