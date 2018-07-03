@@ -8,6 +8,7 @@ import itertools # includes extra tools for iterating through items
 def redraw(screen, selectedPiece, currentGame):
     Global.drawBackground(screen)
     screen.blit(Global.boardImg, Global.boardImgRect)
+    screen.blit(Global.TimerBoard, Global.TimerBoardRect)
     screen.blit(titleText, (Global.boardImgRect.left, int(Global.boardImgRect.top/2 - titleSize/2)))
     if currentGame:
         screen.blit(continueGameText, continueGameRect)
@@ -16,6 +17,7 @@ def redraw(screen, selectedPiece, currentGame):
     screen.blit(pieceText, pieceRect)
     screen.blit(backgroundText, backgroundRect)
     screen.blit(boardText, boardRect)
+    screen.blit(timerText, timerRect)
     if selectedPiece is not None:
         selectedPiece.select(screen)
     # draw the player pieces
@@ -46,6 +48,10 @@ def resizeScreen(screen, width, height, currentGame):
     global titleText
     titleSize = int(Global.Height/9)
     titleFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), titleSize)
+    if Global.Width - 2*Global.boardImgRect.left < titleFont.size("ChAI: Checkers with AI")[0]:
+        titleRatio = titleFont.size("ChAI: Checkers with AI")[0]/titleSize
+        titleSize = int((Global.Width - 2*Global.boardImgRect.left) / titleRatio)
+        titleFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), titleSize)
     titleText = titleFont.render("ChAI: Checkers with AI", True, Global.BLACK)
 
     global startFont
@@ -56,18 +62,24 @@ def resizeScreen(screen, width, height, currentGame):
     global boardText
     global pieceText
     global backgroundText
+    global timerText
 
     startSize = int(Global.Height/16)
     startFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), startSize)
+    itemFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), int(startSize*4/5))
+    if Global.Width - Global.boardImgRect.left - startFont.size("Start New Game")[0] < Global.boardImgRect.right:
+        startRatio = startFont.size("Start New Game")[0] / int(Global.Height/16)
+        startSize = int((Global.Width - Global.boardImgRect.right - Global.boardImgRect.left - 2) / startRatio)
+        startFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), startSize)
+        itemFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), int(startSize*4/5))
+
     newGameText = startFont.render("Start New Game", True, Global.BLACK)
     continueGameText = startFont.render("Continue Game", True, Global.BLACK)
-
-    itemSize = int(Global.Height/20)
-    itemFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), itemSize)
     loadGameText = itemFont.render("Load Saved Game", True, Global.BLACK)
     pieceText = itemFont.render("Checker Pieces", True, Global.BLACK)
     boardText = itemFont.render("Board", True, Global.BLACK)
     backgroundText = itemFont.render("Background", True, Global.BLACK)
+    timerText = itemFont.render("Timer", True, Global.BLACK)
 
     global startRect
     global newGameRect
@@ -76,19 +88,30 @@ def resizeScreen(screen, width, height, currentGame):
     global pieceRect
     global backgroundRect
     global boardRect
+    global timerRect
 
     newGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - startFont.size("Start New Game")[0], Global.boardImgRect.top, startFont.size("Start New Game")[0], startFont.size("Start New Game")[1])
     if not currentGame:
         loadGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Load Saved Game")[0], Global.boardImgRect.top + startSize + Global.boardImgRect.height/16, itemFont.size("Load Saved Game")[0], itemFont.size("Load Saved Game")[1]) 
-        pieceRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Checker Pieces")[0], Global.boardImgRect.top + startSize + itemSize + Global.boardImgRect.height/8, itemFont.size("Checker Pieces")[0], itemFont.size("Checker Pieces")[1])
-        backgroundRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Background")[0], Global.boardImgRect.top + startSize + itemSize*2 + 3*Global.boardImgRect.height/16, itemFont.size("Background")[0], itemFont.size("Background")[1])
-        boardRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Board")[0], Global.boardImgRect.top + startSize + itemSize*3 + Global.boardImgRect.height/4, itemFont.size("Board")[0], itemFont.size("Board")[1])
+        pieceRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Checker Pieces")[0], Global.boardImgRect.top + startSize + int(startSize*4/5) + Global.boardImgRect.height/8, itemFont.size("Checker Pieces")[0], itemFont.size("Checker Pieces")[1])
+        backgroundRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Background")[0], Global.boardImgRect.top + startSize + int(startSize*4/5)*2 + 3*Global.boardImgRect.height/16, itemFont.size("Background")[0], itemFont.size("Background")[1])
+        boardRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Board")[0], Global.boardImgRect.top + startSize + int(startSize*4/5)*3 + Global.boardImgRect.height/4, itemFont.size("Board")[0], itemFont.size("Board")[1])
+        timerRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Timer")[0], Global.boardImgRect.top + startSize + int(startSize*4/5)*4 + 5*Global.boardImgRect.height/16, itemFont.size("Timer")[0], itemFont.size("Timer")[1])
+        
+        
     else:
         continueGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - startFont.size("Continue Game")[0], Global.boardImgRect.top + startSize + Global.boardImgRect.height/16, startFont.size("Continue Game")[0], startFont.size("Continue Game")[1]) 
         loadGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Load Saved Game")[0], Global.boardImgRect.top + startSize*2 + Global.boardImgRect.height/8, itemFont.size("Load Saved Game")[0], itemFont.size("Load Saved Game")[1]) 
-        pieceRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Checker Pieces")[0], Global.boardImgRect.top + startSize*2 + itemSize + 3*Global.boardImgRect.height/16, itemFont.size("Checker Pieces")[0], itemFont.size("Checker Pieces")[1])
-        backgroundRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Background")[0], Global.boardImgRect.top + startSize*2 + itemSize*2 + Global.boardImgRect.height/4, itemFont.size("Background")[0], itemFont.size("Background")[1])
-        boardRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Board")[0], Global.boardImgRect.top + startSize*2 + itemSize*3 + 5*Global.boardImgRect.height/16, itemFont.size("Board")[0], itemFont.size("Board")[1])
+        pieceRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Checker Pieces")[0], Global.boardImgRect.top + startSize*2 + int(startSize*4/5) + 3*Global.boardImgRect.height/16, itemFont.size("Checker Pieces")[0], itemFont.size("Checker Pieces")[1])
+        backgroundRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Background")[0], Global.boardImgRect.top + startSize*2 + int(startSize*4/5)*2 + Global.boardImgRect.height/4, itemFont.size("Background")[0], itemFont.size("Background")[1])
+        boardRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Board")[0], Global.boardImgRect.top + startSize*2 + int(startSize*4/5)*3 + 5*Global.boardImgRect.height/16, itemFont.size("Board")[0], itemFont.size("Board")[1])
+        timerRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Timer")[0], Global.boardImgRect.top + startSize*2 + int(startSize*4/5)*4 + 3*Global.boardImgRect.height/8, itemFont.size("Timer")[0], itemFont.size("Timer")[1])
+        
+        
+    Global.TimerBoard = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'TimerBoards', 'TimerBoard' + str(Global.TimerBoardType) + '.png')), (int(timerRect.width + 2*timerRect.height/13), int(timerRect.height + 2*timerRect.height/13)))
+    Global.TimerBoardRect = Global.TimerBoard.get_rect()
+    Global.TimerBoardRect.left = timerRect.left - timerRect.height/13
+    Global.TimerBoardRect.top = timerRect.top - timerRect.height/13
 
 # select and deselect menu items according to user input
 def processMouseInput(screen, event, currPiece, currentGame):
@@ -117,6 +140,8 @@ def processMouseInput(screen, event, currPiece, currentGame):
         return False, 1
     elif boardRect.collidepoint(event.pos):
         return False, 2
+    elif timerRect.collidepoint(event.pos):
+        return False, 3
 
     return False, None
 
@@ -146,16 +171,20 @@ def RunMenu(screen, currentGame):
                     return x
                     pass
                 else:
+                    # Change the checker type
                     if x == 0:
                         Global.checkerType += 1
                         if Global.checkerType > 0:
                             Global.checkerType = 0
+
+                    # Change the background
                     elif x == 1:
                         Global.backgroundType += 1
                         if Global.backgroundType > 6:
                             Global.backgroundType = 0
                         redraw(screen, selectedPiece, currentGame)
 
+                    # Change the checker board
                     elif x == 2:
                         Global.boardType += 1
                         if Global.boardType > 8:
@@ -166,12 +195,25 @@ def RunMenu(screen, currentGame):
                         Global.boardImg = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'Boards', 'Board' + str(Global.boardType) + '.png')), newBoardSize)
                         screen.blit(Global.boardImg, Global.boardImgRect)
                         for piece in Global.Player1List:
-                            piece.resize(screen, currentGame)
+                            piece.resize(screen)
                         for piece in Global.Player2List:
                             piece.resize(screen)
                         pygame.display.update(Global.boardImgRect)
+
+                    # Change the timer board 
+                    elif x == 3:
+                        Global.TimerBoardType += 1
+                        if Global.TimerBoardType > 6:
+                            Global.TimerBoardType = 0
+                        Global.TimerBoard = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'TimerBoards', 'TimerBoard' + str(Global.TimerBoardType) + '.png')), (int(timerRect.width + 2*timerRect.height/13), int(timerRect.height + 2*timerRect.height/13)))
+                        screen.blit(Global.TimerBoard, Global.TimerBoardRect)
+                        screen.blit(timerText, timerRect)
+                        Global.toUpdate.append(Global.TimerBoardRect)
+
+                    # otherwise they just deselected a piece
                     else:
                         selectedPiece = x
+                    
                 redrawFlag = True
             
         if redrawFlag:

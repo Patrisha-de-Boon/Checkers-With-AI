@@ -94,6 +94,10 @@ while not Quit:
         Global.Player1Dict.clear()
         Global.Player2Dict.clear()
 
+        # reset game and round times
+        Global.GameTime = 0
+        Global.roundTime = 5*60
+
         # place the player pieces in the correct location and store the data
         for i in range(1,9):
             if i%2 != 0:

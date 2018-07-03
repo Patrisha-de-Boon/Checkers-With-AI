@@ -16,6 +16,7 @@ checkerType = 0 # default board type is 0 (the wooden ones. The original unedite
 placeHolderType = 1 # default place holder type is 1 (edited version of checker type)
 PlayerTurn = 1
 backgroundType = 0
+TimerBoardType = 0
 fullscreen = pygame.FULLSCREEN
 
 # this is the list of all the main colours.
@@ -61,6 +62,9 @@ boardImgRect = boardImg.get_rect()
 boardImgRect.center = (Width/2, Height/2)
 
 backImg = get_image(os.path.join('Assets', 'Backgrounds', 'background' + str(backgroundType) + '.jpg'))
+
+TimerBoard = get_image(os.path.join('Assets', 'TimerBoards', 'TimerBoard' + str(TimerBoardType) + '.png'))
+TimerBoardRect = TimerBoard.get_rect()
 
 def drawBackground(screen):
         backImg = get_image(os.path.join('Assets', 'Backgrounds', 'background' + str(backgroundType) + '.jpg'))
