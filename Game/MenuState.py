@@ -9,6 +9,8 @@ def redraw(screen, selectedPiece, currentGame):
     Global.drawBackground(screen)
     screen.blit(Global.boardImg, Global.boardImgRect)
     screen.blit(Global.TimerBoard, Global.TimerBoardRect)
+
+    # draw the menu options onto the screen
     screen.blit(titleText, (Global.boardImgRect.left, int(Global.boardImgRect.top/2 - titleSize/2)))
     if currentGame:
         screen.blit(continueGameText, continueGameRect)
@@ -20,6 +22,7 @@ def redraw(screen, selectedPiece, currentGame):
     screen.blit(timerText, timerRect)
     if selectedPiece is not None:
         selectedPiece.select(screen)
+
     # draw the player pieces
     for player in Global.Player1List:
         player.draw(screen)
@@ -44,6 +47,7 @@ def resizeScreen(screen, width, height, currentGame):
     for piece in Global.Player2List:
         piece.resize(screen)
 
+    # creat title text
     global titleSize
     global titleText
     titleSize = int(Global.Height/9)
@@ -54,6 +58,7 @@ def resizeScreen(screen, width, height, currentGame):
         titleFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), titleSize)
     titleText = titleFont.render("ChAI: Checkers with AI", True, Global.BLACK)
 
+    # create text for the menu options
     global startFont
     global itemFont
     global newGameText
@@ -81,6 +86,7 @@ def resizeScreen(screen, width, height, currentGame):
     backgroundText = itemFont.render("Background", True, Global.BLACK)
     timerText = itemFont.render("Timer", True, Global.BLACK)
 
+    # create the rects in which to place the menu option text
     global startRect
     global newGameRect
     global continueGameRect
@@ -145,6 +151,7 @@ def processMouseInput(screen, event, currPiece, currentGame):
 
     return False, None
 
+# Run the Menu state
 def RunMenu(screen, currentGame):
     Quit = False
     selectedPiece = None
@@ -164,8 +171,10 @@ def RunMenu(screen, currentGame):
                 resizeScreen(screen, event.w, event.h, currentGame)
                 redraw(screen, selectedPiece, currentGame)
             
-            # select and deselect pieces according to the user input
+            # select and deselect pieces and buttons according to the user input
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                # x is 0 to 3 if they changes aesthetics, it's the new state if they changed states, 
+                # and it is the new selected piece if they selected or deselected a piece
                 changeState, x = processMouseInput(screen, event, selectedPiece, currentGame)
                 if changeState:
                     return x
@@ -210,7 +219,7 @@ def RunMenu(screen, currentGame):
                         screen.blit(timerText, timerRect)
                         Global.toUpdate.append(Global.TimerBoardRect)
 
-                    # otherwise they just deselected a piece
+                    # otherwise just select the applicable piece
                     else:
                         selectedPiece = x
                     

@@ -88,7 +88,8 @@ def LoadGame(screen, SaveNumber):
         
     return selectedPiece
 
-# desplay the current saved games that can be loaded
+
+# desplay the current saved games that can be loaded #TODO: Finish and implement this
 def LoadState(screen):
     MustRewrite = False
     FileList = os.listdir(os.path.join('Saves'))
@@ -98,3 +99,43 @@ def LoadState(screen):
     for name in FileList:
         print(name)
     return 4
+
+
+def RestartState(screen):
+     # empty the player piece groups
+    Global.Player1List.empty() 
+    Global.Player2List.empty()
+    Global.Player1Dict.clear()
+    Global.Player2Dict.clear()
+
+    # reset game and round times
+    Global.GameTime = 0
+    Global.roundTime = 5*60
+
+    # place the player pieces in the correct location and store the data
+    for i in range(1,9):
+        if i%2 != 0:
+            Player1Piece = Player.PlayerPiece(screen, 1, i, 1)
+            Global.Player1List.add(Player1Piece)
+            Global.Player1Dict[i, 1] = Player1Piece
+
+            Player1Piece = Player.PlayerPiece(screen, 1, i, 3)
+            Global.Player1List.add(Player1Piece)
+            Global.Player1Dict[i, 3] = Player1Piece
+
+            Player2Piece = Player.PlayerPiece(screen, 2,i,7)
+            Global.Player2List.add(Player2Piece)
+            Global.Player2Dict[i, 7] = Player2Piece
+            
+        else:
+            Player1Piece = Player.PlayerPiece(screen, 1, i, 2)
+            Global.Player1List.add(Player1Piece)
+            Global.Player1Dict[i, 2] = Player1Piece
+
+            Player2Piece = Player.PlayerPiece(screen, 2,i,6)
+            Global.Player2List.add(Player2Piece)
+            Global.Player2Dict[i, 6] = Player2Piece
+
+            Player2Piece = Player.PlayerPiece(screen, 2,i,8)
+            Global.Player2List.add(Player2Piece)
+            Global.Player2Dict[i, 8] = Player2Piece
