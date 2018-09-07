@@ -1,3 +1,5 @@
 # Checkers With AI
 
 ChAI, or Checkers with AI, is an ongoing project. Currently, only the game portion is complete, and the AI is being developed. The game has a menu screen, save game and load game feature, and aesthetic options the user can change. Only multiplayer gameplay is currently supported, but an AI opponent is being created to allow single player gameplay against the AI. The goal is to create an opponent with multiple difficulties that the user can chose, and each difficulty will be based on a different heuristic for the the minimax algorithm. The game itself is written in python, and the AI will be written in C++. The purpose of creating ChAI is to gain experience developing AI and to also gain experience making programs written in two different languages communicate effectively and efficiently with each other.
+
+To run the game, you must have python 3 installed on your computer. Navigate to the "Checkers-With-AI/Game" directory, and run CheckersGame.py with python. In the future, an executable will be available to simplify the process of running the game, but this file is not yet available.
