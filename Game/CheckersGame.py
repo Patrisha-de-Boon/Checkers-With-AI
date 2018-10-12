@@ -2,14 +2,16 @@ import pygame  # load pygame keywords
 import sys     # let python use the file system
 import os      # help python identify the OS
 
-# the initialisation calls for pygame and the current screen.
+# center the screen
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+# the initialization calls for pygame and the current screen.
 pygame.init()  # initialize module
 # record monitor information
 DisplayInfo = pygame.display.Info()
 # create screen surface on
 screen = pygame.display.set_mode((720, 1080), pygame.FULLSCREEN) 
 
-# import gloabl after initializing pygame and screen
+# import global after initializing pygame and screen
 import Global
 import GameState
 import Player
