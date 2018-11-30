@@ -22,8 +22,11 @@ import SaveAndLoad
 Global.DisplayHeight = DisplayInfo.current_h
 Global.DisplayWidth = DisplayInfo.current_w
 
-Global.Height = 720
-Global.Width = 1080
+# Global.Height = 720
+# Global.Width = 1080
+
+Global.Height = (int) (Global.DisplayHeight/4*3)
+Global.Width = (int) (Global.DisplayWidth/4*3)
 
 # which to draw things
 if Global.Width < Global.Height:
@@ -76,7 +79,7 @@ while not Quit:
 
     # Game
     if State == 4:
-        # run game and change state acording to output
+        # run game and change state according to output
         State = GameState.RunGame(screen)
         CurrentGame = True
 

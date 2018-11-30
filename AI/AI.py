@@ -40,7 +40,7 @@ def findJump(board, x, y, moves, possibleMoves = None):
                 possibleMoves.append(newTempMoves)
         # if the piece can move right
         if x+1 < 8:
-                # if you can jump over a piece in the upper right square, add it
+            # if you can jump over a piece in the upper right square, add it
             elif board[x+1][y+1]%2 != mod2 and y+2 < 8 and x+2 < 8 and board[x+2][y+2] == 0:
                 tempMoves = moves
                 tempMoves.append([(x+1,y+1), (x+2, y+2)])
@@ -55,7 +55,7 @@ def findJump(board, x, y, moves, possibleMoves = None):
     elif (mod2 == 0 or piece == 3) and y-1 >= 0: 
         # if the piece can move left
         if x-1 >= 0:
-                # if you can jump over a piece in the botoom left square, add it
+            # if you can jump over a piece in the bottom left square, add it
             elif board[x-1][y-1]%2 != mod2 and y+2 < 8 and x-2 > 0 and board[x-2][y-2] == 0:
                 tempMoves = moves
                 moves.append([(x-1,y-1), (x-2, y-2)])
@@ -80,7 +80,7 @@ def findJump(board, x, y, moves, possibleMoves = None):
     
     return possibleMoves
 
-# given a board and a player, return a list of aavailable but not necessary moves, 
+# given a board and a player, return a list of available but not necessary moves, 
 # and a list of necessary moves
 def findMoves(board, isPlayer1):
     availableMoves = []
@@ -114,7 +114,7 @@ def findMoves(board, isPlayer1):
                 # if the bottom left square is empty, add it
                 if board[x-1][y-1] == 0:
                     availableMoves.append((x-1,y-1))
-                # if you can jump over a piece in the botoom left square, add it
+                # if you can jump over a piece in the bottom left square, add it
                 elif board[x-1][y-1]%2 != mod2 and y+2 < 8 and x-2 > 0 and board[x-2][y-2] == 0:
                     necessaryMoves.append([(x-1,y-1), (x-2, y-2)])
             # if the piece can move right

@@ -4,6 +4,39 @@ import os      # help python identify the OS
 import Global  # includes variables meant to be common to multiple files
 import itertools # includes extra tools for iterating through items
 
+class MenuButton():
+    def __init__(self, text, changeState, returnVal):
+        self.text = text
+        self.changeState = changeState
+        self.returnVal = returnVal
+        self.top = None
+        self.rendText = None
+        self.Rect = None
+
+    def resize(self, top, font):
+        self.top = top
+        self.rendText = font.render(self.text, True, Global.BLACK)
+        self.Rect = pygame.Rect(Global.Width - Global.boardImgRect.left - font.size(self.text)[0], top, font.size(self.text)[0], font.size(self.text)[1])
+        
+    def draw(self, screen):
+        if (self.Rect != None):
+            screen.blit(self.rendText, self.Rect)
+    
+    def collided(self, pos):
+        if self.Rect.collidepoint(pos):
+            return (self.changeState, self.returnVal)
+        else:
+            return (False, None)
+
+MenuButtons = [MenuButton("Start New Game", True, 6), 
+                MenuButton("Continue Game", True, 4), 
+                MenuButton("Load Saved Game", True, 8), 
+                MenuButton("Checker Pieces", False, 0), 
+                MenuButton("Background", False, 1), 
+                MenuButton("Board", False, 2), 
+                MenuButton("Timer", False, 3), 
+                MenuButton("Quit", False, 9)]   
+
 # completely redraw the entire screen and everything on it
 def redraw(screen, selectedPiece, currentGame):
     Global.drawBackground(screen)
@@ -12,14 +45,11 @@ def redraw(screen, selectedPiece, currentGame):
 
     # draw the menu options onto the screen
     screen.blit(titleText, (Global.boardImgRect.left, int(Global.boardImgRect.top/2 - titleSize/2)))
-    if currentGame:
-        screen.blit(continueGameText, continueGameRect)
-    screen.blit(newGameText, newGameRect)
-    screen.blit(loadGameText, loadGameRect)
-    screen.blit(pieceText, pieceRect)
-    screen.blit(backgroundText, backgroundRect)
-    screen.blit(boardText, boardRect)
-    screen.blit(timerText, timerRect)
+    
+    for button in MenuButtons:
+        if not ((not currentGame) and (button.text == "Continue Game")):
+            button.draw(screen)
+
     if selectedPiece is not None:
         selectedPiece.select(screen)
 
@@ -47,7 +77,7 @@ def resizeScreen(screen, width, height, currentGame):
     for piece in Global.Player2List:
         piece.resize(screen)
 
-    # creat title text
+    # create title text
     global titleSize
     global titleText
     titleSize = int(Global.Height/9)
@@ -61,13 +91,6 @@ def resizeScreen(screen, width, height, currentGame):
     # create text for the menu options
     global startFont
     global itemFont
-    global newGameText
-    global continueGameText
-    global loadGameText
-    global boardText
-    global pieceText
-    global backgroundText
-    global timerText
 
     startSize = int(Global.Height/16)
     startFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), startSize)
@@ -78,46 +101,21 @@ def resizeScreen(screen, width, height, currentGame):
         startFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), startSize)
         itemFont = pygame.font.Font(os.path.join('Assets', 'Fonts', 'ahellya.ttf'), int(startSize*4/5))
 
-    newGameText = startFont.render("Start New Game", True, Global.BLACK)
-    continueGameText = startFont.render("Continue Game", True, Global.BLACK)
-    loadGameText = itemFont.render("Load Saved Game", True, Global.BLACK)
-    pieceText = itemFont.render("Checker Pieces", True, Global.BLACK)
-    boardText = itemFont.render("Board", True, Global.BLACK)
-    backgroundText = itemFont.render("Background", True, Global.BLACK)
-    timerText = itemFont.render("Timer", True, Global.BLACK)
-
-    # create the rects in which to place the menu option text
-    global startRect
-    global newGameRect
-    global continueGameRect
-    global loadGameRect
-    global pieceRect
-    global backgroundRect
-    global boardRect
-    global timerRect
-
-    newGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - startFont.size("Start New Game")[0], Global.boardImgRect.top, startFont.size("Start New Game")[0], startFont.size("Start New Game")[1])
-    if not currentGame:
-        loadGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Load Saved Game")[0], Global.boardImgRect.top + startSize + Global.boardImgRect.height/16, itemFont.size("Load Saved Game")[0], itemFont.size("Load Saved Game")[1]) 
-        pieceRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Checker Pieces")[0], Global.boardImgRect.top + startSize + int(startSize*4/5) + Global.boardImgRect.height/8, itemFont.size("Checker Pieces")[0], itemFont.size("Checker Pieces")[1])
-        backgroundRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Background")[0], Global.boardImgRect.top + startSize + int(startSize*4/5)*2 + 3*Global.boardImgRect.height/16, itemFont.size("Background")[0], itemFont.size("Background")[1])
-        boardRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Board")[0], Global.boardImgRect.top + startSize + int(startSize*4/5)*3 + Global.boardImgRect.height/4, itemFont.size("Board")[0], itemFont.size("Board")[1])
-        timerRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Timer")[0], Global.boardImgRect.top + startSize + int(startSize*4/5)*4 + 5*Global.boardImgRect.height/16, itemFont.size("Timer")[0], itemFont.size("Timer")[1])
+    offset = 1
+    for i in range(1, len(MenuButtons)):
+        button = MenuButtons[i]
+        if (i == 0):
+            button.resize(Global.boardImgRect.top, startFont)
+        if (i == 1 and currentGame):
+            button.resize(Global.boardImgRect.top + startSize + Global.boardImgRect.height/16, startFont)
+            offset = 2
+        else:
+            button.resize(Global.boardImgRect.top + startSize*offset + int(startSize*4/5)*(i-2) + (int)(Global.boardImgRect.height/16)*i, itemFont)        
         
-        
-    else:
-        continueGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - startFont.size("Continue Game")[0], Global.boardImgRect.top + startSize + Global.boardImgRect.height/16, startFont.size("Continue Game")[0], startFont.size("Continue Game")[1]) 
-        loadGameRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Load Saved Game")[0], Global.boardImgRect.top + startSize*2 + Global.boardImgRect.height/8, itemFont.size("Load Saved Game")[0], itemFont.size("Load Saved Game")[1]) 
-        pieceRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Checker Pieces")[0], Global.boardImgRect.top + startSize*2 + int(startSize*4/5) + 3*Global.boardImgRect.height/16, itemFont.size("Checker Pieces")[0], itemFont.size("Checker Pieces")[1])
-        backgroundRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Background")[0], Global.boardImgRect.top + startSize*2 + int(startSize*4/5)*2 + Global.boardImgRect.height/4, itemFont.size("Background")[0], itemFont.size("Background")[1])
-        boardRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Board")[0], Global.boardImgRect.top + startSize*2 + int(startSize*4/5)*3 + 5*Global.boardImgRect.height/16, itemFont.size("Board")[0], itemFont.size("Board")[1])
-        timerRect = pygame.Rect(Global.Width - Global.boardImgRect.left - itemFont.size("Timer")[0], Global.boardImgRect.top + startSize*2 + int(startSize*4/5)*4 + 3*Global.boardImgRect.height/8, itemFont.size("Timer")[0], itemFont.size("Timer")[1])
-        
-        
-    Global.TimerBoard = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'TimerBoards', 'TimerBoard' + str(Global.TimerBoardType) + '.png')), (int(timerRect.width + 2*timerRect.height/13), int(timerRect.height + 2*timerRect.height/13)))
+    Global.TimerBoard = pygame.transform.scale(Global.get_image(os.path.join('Assets', 'TimerBoards', 'TimerBoard' + str(Global.TimerBoardType) + '.png')), (int(MenuButtons[6].Rect.width + 2*MenuButtons[6].Rect.height/13), int(MenuButtons[6].Rect.height + 2*MenuButtons[6].Rect.height/13)))
     Global.TimerBoardRect = Global.TimerBoard.get_rect()
-    Global.TimerBoardRect.left = timerRect.left - timerRect.height/13
-    Global.TimerBoardRect.top = timerRect.top - timerRect.height/13
+    Global.TimerBoardRect.left = MenuButtons[6].Rect.left - (int)(MenuButtons[6].Rect.height/13)
+    Global.TimerBoardRect.top = MenuButtons[6].Rect.top - (int)(MenuButtons[6].Rect.height/13)
 
 # select and deselect menu items according to user input
 def processMouseInput(screen, event, currPiece, currentGame):
@@ -133,23 +131,11 @@ def processMouseInput(screen, event, currPiece, currentGame):
     if currPiece is not None:
         currPiece.deselect(screen)
 
-    if currentGame:
-        if continueGameRect.collidepoint(event.pos):
-            return True, 4
-    if newGameRect.collidepoint(event.pos):
-        return True, 6
-    elif loadGameRect.collidepoint(event.pos):
-        return True, 8
-    elif pieceRect.collidepoint(event.pos):
-        return False, 0
-    elif backgroundRect.collidepoint(event.pos):
-        return False, 1
-    elif boardRect.collidepoint(event.pos):
-        return False, 2
-    elif timerRect.collidepoint(event.pos):
-        return False, 3
-
-    return False, None
+    for button in MenuButtons:
+        if not ((button.text == "Continue Game") and not continueGame):
+            if (button.collided != (False, None)):
+                return button.collided()
+        return False, None
 
 # Run the Menu state
 def RunMenu(screen, currentGame):
